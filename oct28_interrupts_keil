@@ -1,0 +1,55 @@
+#include<reg51.h>
+sbit ledmain=P1^0;
+sbit ledintr=P1^1;
+sbit ledintr1=P1^2;
+
+delay()
+{
+	int i;
+	for(i=0;i<10000;i++);
+}
+
+void intr0_ext() interrupt 0
+{
+	int k;
+	for(k=0;k<=2;k++)
+	{
+	ledintr=0;
+	delay();
+	ledintr=1;
+	delay();
+	}
+}
+
+void intr1_ext() interrupt 2
+{
+	int g;
+	for(g=0;g<=4;g++)
+	{
+		ledintr1=0;
+	  delay();
+	ledintr1=1;
+	delay();
+	}
+}
+
+
+main()
+{
+	EA=1;
+	EX0=1;
+	EX1=1;
+	IT0=1;
+	IT1=1;
+	while(1)
+	{
+		int j;
+		for(j=0;j<2;j++)
+		{
+		ledmain=0;
+			delay();
+		ledmain=1;
+		delay();
+		}
+	}
+}
