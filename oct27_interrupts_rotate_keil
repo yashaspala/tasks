@@ -1,0 +1,60 @@
+#include<reg51.h>
+#define LED P0
+#define intr0 P1
+#define intr1 P2
+
+
+delay()
+{
+		int i,j;
+		for(j=0;j<10000;j++)
+	{
+		for(i=0;i<1000;i++);
+	}
+}
+
+void intr0_ext() interrupt 0
+{
+	int n,i;
+	  n=0x80;
+	  for(i=0;i<8;i++)
+		{
+			intr0=n^(0xff);
+			n=n>>1;
+			delay();
+		}
+}
+
+void intr1_ext() interrupt 2
+
+	{
+			int n,i;
+	  n=0x80;
+	  for(i=0;i<8;i++)
+		{
+			intr1=n^(0xff);
+			n=n>>1;
+			delay();
+		}
+	}
+
+main()
+{
+	int i,n;
+	EA=1;
+	EX0=1;
+	EX1=1;
+	IT0=1;
+	IT1=1;
+	PX1=1;
+	while(1)
+	{
+	  n=0x80;
+	  for(i=0;i<8;i++)
+		{
+			LED=n^(0xff);
+			n=n>>1;
+			delay();
+		}
+	}
+}
