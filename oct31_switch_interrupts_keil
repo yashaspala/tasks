@@ -1,0 +1,28 @@
+#include<REG52.h>
+
+
+sbit led0 = P1^0;
+sbit sw0 = P3^4;
+
+void timer0_interrupt() interrupt 1
+{
+	
+	TH0 = 0xFF ;
+	TL0 = 0xFF ;
+	led0=~led0;
+}
+
+void main()
+{
+
+	TMOD = 0x05; // setting timer in 16 bit mode// 0x60 counter // 0x20 timer
+	TH0=0xFF;
+	TL0=0xFF;
+	
+	EA=1;
+
+	ET0=1; //Enable timer 0
+	TR0 =1;// start TIMER0
+
+	while(1);
+}
