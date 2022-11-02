@@ -1,0 +1,52 @@
+#include<reg51.h>
+#include<stdlib.h>
+
+void delay(int);
+void print_str(char *);
+
+sbit lefd=P1^0;
+bit bTx_flag=0;
+bit bRx_flag=0;
+
+volatile char ch;
+
+void ser_int() interrupt 4
+{
+		if(TI)
+		{
+			bTx_flag=1;
+			TI=0;
+		}
+		else if (RI)
+		{
+			ch=SBUF;
+			bRx_flag=1;
+			RI=0;
+		}
+}
+
+void main()
+{
+	char *str="BOSCH";
+	SCON = 0x50;
+	TMOD = 0x20;
+	TH1 = 0xfa;
+	TR1 = 1;
+	
+	EA = 1;
+	ES = 1;
+	
+	while(1)
+	{
+		if(bRx_flag)
+		{
+			SBUF=ch;
+			bTx_flag=0;
+			
+			while(bTx_flag==0);
+			 bTx_flag=0;
+			bRx_flag=0;
+		}
+	}
+}
+
