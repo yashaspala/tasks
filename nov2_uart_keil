@@ -1,0 +1,63 @@
+#define Baud_rate 0xFA
+#include<reg51.h>
+
+void main(void);
+void SerialInitialize(void);
+void SendByteSerially(unsigned char ascii);
+unsigned char ReceiveByteSerially(void);
+void print_str(char *);
+char *str = "Hello Bosch";
+//Functions
+void main(void)
+{
+	
+	unsigned char serialdata;    //declare serial data as unsigned char
+	TMOD = ((TMOD & 0x0F) | 0x20);  //Timer 1 in mode 2 -Auto reload to generate baud rate
+	SCON = 0x50;     // Serial mode 1, 8-data bit 1-start bit,1 stop bit, REN enabled
+	TH1 = Baud_rate; // Load BaudRate to time register
+	TR1 = 1;
+
+	
+	for(;;)
+	{
+		//serialdata = ReceiveByteSerially();
+	
+		//SendByteSerially(serialdata);
+
+		print_str(str);
+		
+	}
+}
+
+void print_str(char *string)
+{
+	while(*str)
+	{
+		SendByteSerially(*str);
+		str++;
+	}
+}
+
+
+
+void SerialIntialize() //initialize serial port
+{
+	TMOD = ((TMOD & 0x0F) | 0x20);  //Timer 1 in mode 2 -Auto reload to generate baud rate
+	SCON = 0x50;     // Serial mode 1, 8-data bit 1-start bit,1 stop bit, REN enabled
+	TH1 = Baud_rate; // Load BaudRate to time register
+	TR1 = 1;
+}
+
+void SendByteSerially(unsigned char serialdata)
+{
+	SBUF = serialdata;
+	while(TI==0);
+	TI=0;
+}
+
+unsigned char ReceiveByteSerially(void)
+{
+	while(RI == 0);
+	RI=0;
+	return SBUF;
+}
